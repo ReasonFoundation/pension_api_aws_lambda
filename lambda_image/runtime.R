@@ -15,16 +15,20 @@ prettify_list <- function(x) {
 
 log_debug("Deriving lambda runtime API endpoints from environment variables")
 lambda_runtime_api <- Sys.getenv("AWS_LAMBDA_RUNTIME_API")
-if (lambda_runtime_api == "") {
+log_info("Lambda Runtime API:", lambda_runtime_api)
+
+if (Sys.getenv("AWS_LAMBDA_RUNTIME_API") == "") {
   error_message <- "AWS_LAMBDA_RUNTIME_API environment variable undefined"
   log_error(error_message)
   stop(error_message)
 }
-next_invocation_endpoint <- paste0(
-  "http://", lambda_runtime_api, "/2018-06-01/runtime/invocation/next"
-)
+# next_invocation_endpoint <- paste0(
+#   "http://", Sys.getenv("AWS_LAMBDA_RUNTIME_API"), "/2018-06-01/runtime/invocation/next"
+# )
+# log_info("Next invocation endpoint:", next_invocation_endpoint)
+
 initialisation_error_endpoint <- paste0(
-  "http://", lambda_runtime_api, "/2018-06-01/runtime/init/error"
+  "http://", Sys.getenv("AWS_LAMBDA_RUNTIME_API"), "/2018-06-01/runtime/init/error"
 )
 
 tryCatch(
@@ -100,7 +104,7 @@ handle_event <- function(event) {
   result <- do.call(function_name, event_content)
   log_debug("Result:", as.character(result))
   response_endpoint <- paste0(
-    "http://", lambda_runtime_api, "/2018-06-01/runtime/invocation/",
+    "http://", Sys.getenv("AWS_LAMBDA_RUNTIME_API"), "/2018-06-01/runtime/invocation/",
     aws_request_id, "/response"
   )
   POST(
@@ -115,15 +119,19 @@ log_info("Querying for events")
 while (TRUE) {
   tryCatch(
   {
-    event <- GET(url = next_invocation_endpoint)
+    event <- GET(url = paste0(
+  "http://", Sys.getenv("AWS_LAMBDA_RUNTIME_API"), "/2018-06-01/runtime/invocation/next"
+))
     log_debug("Event received")
+    log_info("About to call handle_event")
     handle_event(event)
+    log_info("handle_event called successfully")
   },
     error = function(e) {
       log_error(as.character(e))
       if (exists("aws_request_id")) {
         invocation_error_endpoint <- paste0(
-          "http://", lambda_runtime_api, "/2018-06-01/runtime/invocation/",
+          "http://", Sys.getenv("AWS_LAMBDA_RUNTIME_API"), "/2018-06-01/runtime/invocation/",
           aws_request_id, "/error"
         )
         POST(

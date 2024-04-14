@@ -1,6 +1,7 @@
-FROM public.ecr.aws/lambda/provided
+FROM public.ecr.aws/lambda/provided:al2-x86_64
+#FROM public.ecr.aws/lambda/provided:al2-arm64
 
-ENV R_VERSION=4.0.3
+ENV R_VERSION=4.2.3
 ENV PATH="${PATH}:/opt/R/${R_VERSION}/bin/"
 
 # install R
@@ -12,6 +13,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     && yum clean all \
     && rm -rf /var/cache/yum/*
 
+
 # install AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
     && unzip awscliv2.zip \
@@ -19,14 +21,20 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     && rm -f awscliv2.zip
 
 # install R packages
-RUN Rscript -e "install.packages(c('httr', 'logger', 'glue', 'jsonslite', 'randomForest'), repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('readxl', 'dplyr', 'tidyr', 'zoo', 'data.table', 'openxlsx', 'Rcpp', 'httr', 'logger', 'glue', 'jsonlite'), repos = 'http://cran.rstudio.com/')"
+
+
 
 # Copy R runtime and inference code
 COPY runtime.R predict.R ${LAMBDA_TASK_ROOT}/
 RUN chmod 755 -R ${LAMBDA_TASK_ROOT}/
+
+# Copy the model file into the container image
+COPY model ${LAMBDA_TASK_ROOT}/model
 
 COPY bootstrap ${LAMBDA_RUNTIME_DIR}/
 RUN chmod 755 ${LAMBDA_RUNTIME_DIR}/bootstrap
 RUN rm -rf /tmp/*
 
 CMD [ "predict.handler" ]
+

@@ -1,0 +1,143 @@
+curr_disc_rate = 0.0755
+new_disc_rate = 0.0755
+cola = 0.03
+retire_refund_ratio = 0.6
+funding_policy = "status quo"
+analysis_type = "Deterministic"
+roa_scenario = "Assumption"
+
+
+// [[Rcpp::export]]
+NumericVector opt_PVFS_rcpp(double interest, NumericVector remaining_prob_vec, NumericVector sal_vec){
+  int n = sal_vec.size();
+  NumericVector PVFS(n);
+  for (int i = 0; i < n; i++){
+    NumericVector remaining_prob_og = remaining_prob_vec[seq(i, n)];
+    NumericVector remaining_prob = remaining_prob_og / remaining_prob_og[0];
+    NumericVector sal = sal_vec[seq(i, n)];
+    NumericVector sal_adjusted = sal * remaining_prob;
+    PVFS[i] = get_npv_rcpp(interest, sal_adjusted);
+  }
+  PVFS = ifelse(is_na(PVFS), 0, PVFS);
+  return PVFS;
+}
+
+        
+        
+# start from the rocker/r-ver image
+FROM rocker/r-ver:4.2.3
+
+# install the linux libraries needed for plumber
+RUN apt-get update -qq && apt-get install -y \
+  libssl-dev \
+  libcurl4-gnutls-dev \
+  zlib1g-dev \
+  libsodium-dev
+  
+# install the required R packages
+RUN R -e "install.packages('plumber', repos='http://cran.rstudio.com/', version='1.2.1')"
+RUN R -e "install.packages('readxl', repos='http://cran.rstudio.com/', version='1.4.2')"
+RUN R -e "install.packages('dplyr', repos='http://cran.rstudio.com/', version='1.1.1')"
+RUN R -e "install.packages('tidyr', repos='http://cran.rstudio.com/', version='1.3.0')"
+RUN R -e "install.packages('zoo', repos='http://cran.rstudio.com/', version='1.8-11')"
+RUN R -e "install.packages('data.table', repos='http://cran.rstudio.com/', version='1.14.8')"
+RUN R -e "install.packages('openxlsx', repos='http://cran.rstudio.com/', version='4.2.5.2')"
+RUN R -e "install.packages('Rcpp', repos='http://cran.rstudio.com/', version='1.0.10')"
+RUN R -e "install.packages('ggplot2', repos='http://cran.rstudio.com/', version='3.4.2')"
+RUN R -e "install.packages('memoise', repos='http://cran.rstudio.com/', version='2.0.1')"
+
+# copy everything from the current directory into the container
+COPY / /
+
+# open port 80 to traffic
+EXPOSE 80
+
+# when the container starts, start the main.R script
+ENTRYPOINT ["Rscript", "runPlumberAPI.R"]
+
+
+  # start_sal_proj <- Sys.time()
+  # salary_projection <-
+  #   expand_grid(
+  #     entry_year = entry_year_range,
+  #     entry_age = all_entry_age,
+  #     yos = yos_range) %>%
+  #   mutate(
+  #     age = entry_age + yos,
+  #     year = entry_year + yos) %>%
+  #   filter(age <= max_age) %>%
+  #   arrange(entry_year, entry_age, yos) %>%
+  #   select(entry_year, entry_age, age, yos, year) %>%
+  #   left_join(salary_entry, by = "entry_age") %>%
+  #   left_join(SalaryGrowth, by = "yos") %>%
+  #   left_join(SalaryHeadCountData %>% select(entry_year, entry_age, entry_salary), by=c("entry_year", "entry_age")) %>%
+  #   group_by(entry_year, entry_age) %>%
+  #   mutate(
+  #     # salary = start_salary * cumprod(1 + lag(salary_growth_rate, default = 0)) * (1 + payroll_growth_)^(year - yos - year_start),
+  #     salary = ifelse(entry_year <= max(SalaryHeadCountData$entry_year), entry_salary * sal_cum_growth,
+  #                     start_salary * sal_cum_growth * (1 + payroll_growth_)^(entry_year - year_start)),
+  #     fas_year = 4,
+  #     final_avg_salary = get_roll_mean(salary, fas_year), # fix FAS at 4
+  #     employee_contribution = ee_contr_rate_ * salary,
+  #     db_employee_balance = get_cum_fv(credited_interest_, employee_contribution),
+  #   ) %>%
+  #   ungroup() %>%
+  #   filter(!is.na(salary))
+  # mid_sal_proj <- Sys.time()
+  # setDT(salary_projection)
+  # end_sal_proj <- Sys.time()
+  
+  ############################### Annuity Factor   ############################### 
+  # With the initial way of generating mortality_rate table, it took 2s to generate the annuity_factor table
+  #Survival Probability and Annuity Factor - Must optimize this function
+  # start_annuity_factor <- Sys.time()
+
+  # opt_annuity_factor_tab <- opt_mortality_rate %>%
+  #   semi_join(salary_projection, by=c("entry_year", "entry_age"))
+  # setDT(opt_annuity_factor_tab)
+  # opt_annuity_factor_tab[, discount_rate := if_else(entry_year <= year_start, curr_discount_rate, new_discount_rate)]
+  # opt_annuity_factor_tab <- opt_annuity_factor_tab[, {
+  #   # discount_rate = ifelse(entry_year <= year_start, curr_discount_rate, new_discount_rate)
+  #   # survival_rate_ = cumprod(1 - shift(mort_rate, fill = 0, type = "lag"))
+  #   min_age = cummin(age)
+  #   disc_survival_rate = survival_rate_ / (1 + discount_rate) ^ (age - min_age)
+  #   disc_survival_rate_cola = disc_survival_rate * (1 + cola) ^ (age - min_age)
+  #   disc_survival_rate_cola_ = cumsum(rev(disc_survival_rate_cola))
+  #   annuity_factor = rev(disc_survival_rate_cola_) / disc_survival_rate_cola
+  #   # annuity_factor = rev(cumsum(rev(disc_survival_rate_cola))) / disc_survival_rate_cola
+  #   .(term_year, age, min_age, discount_rate, year, survival_rate_, disc_survival_rate, disc_survival_rate_cola, annuity_factor)
+  # }, by = .(entry_year, entry_age, yos)]
+  
+  
+  
+  # saveRDS(output, "./projected_benefit.rds")
+  
+  # export_output <- opt_final_data_ %>% select(year, age, yos, entry_year, entry_age,
+  #                                               remaining_prob, discount_rate, salary,
+  #                                               pv_future_salary, pv_future_benefit, normal_cost_rate)
+  # export_input <- opt_final_data %>%
+  #   filter(entry_year == 2052, entry_age == 65) %>%
+  #   mutate(
+  # 
+  #     # salary = round(salary, digits=0),
+  # 
+  #     #Calculate present value of future benefits (PVFB) for DB members
+  #     pv_future_benefit = opt_PVFB_rcpp(sep_rate, discount_rate, nominal_pension_wealth),
+  # 
+  #     #Calculate present value of future salaries (PVFS)
+  #     npv_ = get_npv_rcpp(curr_discount_rate, salary),
+  # 
+  #     pv_future_salary = opt_PVFS_rcpp(curr_discount_rate, remaining_prob, salary),
+  # 
+  #     #Calculate entry-age normal cost rate by dividing the PVFB by the PVFS at entry age
+  #     normal_cost_rate = pv_future_benefit[yos == 0] / pv_future_salary[yos == 0],
+  # 
+  #     #Calculate present value of future normal costs (PVFNC)
+  #     # pv_future_normal_cost = pv_future_salary * normal_cost_rate
+  #   )
+  
+  # remain_prob <- c(seq(cola, 0.9, length.out=10^4),rep(0, length.out=5))
+  # discount_rate <- rep(curr_discount_rate, length(remain_prob))
+  # salary <- seq(1, 900, length.out=length(remain_prob))
+  # 
+  # export_output <- opt_PVFS_rcpp(curr_discount_rate, remain_prob, salary)

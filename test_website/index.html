@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Data Input Form</title>
+    <!-- Add any additional CSS or head elements here -->
+</head>
+<body>
+    <h1>Enter Model Data</h1>
+    <form id="modelDataForm">
+        <label for="curr_dist_rate">Current Distribution Rate:</label>
+        <input type="text" id="curr_dist_rate" name="curr_dist_rate" required>
+
+        <label for="new_dist_rate">New Distribution Rate:</label>
+        <input type="text" id="new_dist_rate" name="new_dist_rate" required>
+
+        <label for="cola">COLA:</label>
+        <input type="text" id="cola" name="cola" required>
+
+        <label for="retire_refund_ratio">Retire Refund Ratio:</label>
+        <input type="text" id="retire_refund_ratio" name="retire_refund_ratio" required>
+
+        <label for="funding_policy">Funding Policy:</label>
+        <input type="text" id="funding_policy" name="funding_policy" required>
+
+        <label for="analysis_type">Analysis Type:</label>
+        <input type="text" id="analysis_type" name="analysis_type" required>
+
+        <label for="roa_scenario">ROA Scenario:</label>
+        <input type="text" id="roa_scenario" name="roa_scenario" required>
+
+        <button type="button" onclick="submitData()">Submit</button>
+    </form>
+
+
+    <h2>Entered Data:</h2>
+    <pre id="submittedData"></pre>
+
+
+    <h2>API Response:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        function submitData() {
+            var formElement = document.getElementById('modelDataForm');
+            var formData = new FormData(formElement);
+            var object = {};
+            formData.forEach(function(value, key){
+                object[key] = value;
+            });
+            var json = JSON.stringify(object);
+
+            // Print the input data
+            document.getElementById('submittedData').innerText = json;
+
+            fetch('https://bnpluoau49.execute-api.us-east-1.amazonaws.com/prod/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: json
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = 'Response: ' + JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error: ' + error;
+            });
+        }
+    </script>
+</body>
+</html>

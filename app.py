@@ -10,8 +10,8 @@ class InferenceStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        project_name = 'r-inference'
-        s3_model_uri = '<ADD YOUR S3 MODEL URI HERE>'
+        project_name = 'mspers-inference'
+        # s3_model_uri = 's3://mspers-model-bucket/model/'
         # ==================================================
         # ================= IAM ROLES ======================
         # ==================================================
@@ -19,8 +19,18 @@ class InferenceStack(core.Stack):
             scope=self,
             id='lambda_role',
             assumed_by=aws_iam.ServicePrincipal(service='lambda.amazonaws.com'),
-            managed_policies=[aws_iam.ManagedPolicy.from_aws_managed_policy_name('AWSLambdaExecute')]
+            managed_policies=[
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AWSLambdaExecute'),
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AWSXrayWriteOnlyAccess')  # X-Ray permissions
+            ]
         )
+
+        # lambda_role.add_to_policy(aws_iam.PolicyStatement(
+        #     effect=aws_iam.Effect.ALLOW,
+        #     actions=["s3:GetObject", "s3:ListBucket"],
+        #     resources=["arn:aws:s3:::mspers-model-bucket/model/*", "arn:aws:s3:::mspers-model-bucket"]
+        # ))
+
 
         api_role = aws_iam.Role(
             scope=self,
@@ -48,12 +58,24 @@ class InferenceStack(core.Stack):
             id='lambda',
             function_name=project_name,
             code=ecr_image,
-            memory_size=1024,
+            memory_size=10240,
             role=lambda_role,
-            environment={
-                'S3_MODEL_URI': s3_model_uri
-            },
-            timeout=core.Duration.seconds(30)
+            # environment={
+            #     'S3_MODEL_URI': s3_model_uri
+            # },
+            timeout=core.Duration.seconds(900),
+            tracing=aws_lambda.Tracing.ACTIVE,  # Enable AWS X-Ray tracing
+            # architecture="arm64"  # Specify ARM architecture as a string
+        )
+
+        # Provisioned concurrency configuration
+        version = lambda_function.add_version(name='NewVersion')
+        alias = aws_lambda.Alias(
+            self,
+            'LambdaAlias',
+            alias_name='Prod',
+            version=version,
+            provisioned_concurrent_executions=1  # Number of provisioned instances
         )
 
         # ==================================================
@@ -64,7 +86,7 @@ class InferenceStack(core.Stack):
             id='api_gateway',
             api_name=project_name,
             cors_preflight={
-                "allow_headers": ["Authorization"],
+                "allow_headers": ["Authorization", "Content-Type"],
                 "allow_methods": [aws_apigatewayv2.HttpMethod.POST],
                 "allow_origins": ["*"],
                 "max_age": core.Duration.days(10)
