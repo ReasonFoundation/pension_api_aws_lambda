@@ -8,11 +8,17 @@ get_liability_data <- function(
     ){
 
   # start_ben_proj <- Sys.time()
+  # benefit_data <- get_benefit_data(
+  #   curr_dist_rate = curr_discount_rate_,
+  #   new_dist_rate = new_discount_rate_,
+  #   cola = cola_,
+  #   retire_refund_ratio = retire_refund_ratio_
+  # )
   benefit_data <- get_benefit_data(
-    curr_dist_rate = curr_discount_rate_,
-    new_dist_rate = new_discount_rate_,
-    cola = cola_,
-    retire_refund_ratio = retire_refund_ratio_
+    curr_dist_rate = curr_dist_rate,
+    new_dist_rate = new_dist_rate,
+    cola = cola,
+    retire_refund_ratio = retire_refund_ratio
   )
   
   

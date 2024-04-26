@@ -9,6 +9,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     && yum -y install https://cdn.rstudio.com/r/centos-7/pkgs/R-${R_VERSION}-1-1.x86_64.rpm \
     openssl-devel \
     libxml2-devel \
+    libxml2 \
     unzip \
     && yum clean all \
     && rm -rf /var/cache/yum/*

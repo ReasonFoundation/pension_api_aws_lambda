@@ -1,5 +1,5 @@
 
-rm(list = ls())
+# rm(list = ls())
 
 # s_time <- Sys.time()
 
@@ -7,7 +7,6 @@ library("readxl")
 library(dplyr)
 library(tidyr)
 library(zoo)
-# library(ggplot2)
 library(data.table)
 library(openxlsx)
 library(Rcpp)
@@ -40,7 +39,14 @@ source("/var/task/model/FundingModel.R")
 # wf_projection <- readRDS("wf_data.rds")
 # source("LiabilityModel.R")
 # source("FundingModel.R")
-# 
-# funding <- get_funding_data()
-# 
+
+# funding <- memoised_get_funding_data(
+#   curr_dist_rate = 0.0755
+# )
+
+# funding <- get_funding_data(
+#   curr_dist_rate = 0.0755
+# )
+
 # e_time <- Sys.time()
+

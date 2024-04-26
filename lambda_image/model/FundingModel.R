@@ -8,17 +8,17 @@ get_funding_data <- function(
     roa_scenario = roa_scenario_
     ){
   
+    # liability_data <- get_liability_data(
+    #   curr_dist_rate = curr_dist_rate,
+    #   new_dist_rate = new_dist_rate,
+    #   cola = cola,
+    #   retire_refund_ratio = retire_refund_ratio)
+
     liability_data <- get_liability_data(
       curr_dist_rate = curr_dist_rate,
       new_dist_rate = new_dist_rate,
       cola = cola,
       retire_refund_ratio = retire_refund_ratio)
-
-    # liability_data <- get_liability_data(
-    #   curr_discount_rate,
-    #   new_discount_rate,
-    #   cola,
-    #   retire_refund_ratio)
   
     # liability_data <- readRDS("./projected_liabilities.rds")
     

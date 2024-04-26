@@ -1,14 +1,16 @@
+source("/var/task/model/MasterModel.R")
 library(jsonlite)
 
 # download model file from S3 into /tmp folder
 # system("aws s3 cp ${S3_MODEL_URI} /tmp/model-folder/ --recursive")
 
 handler <- function(body, ...) {
+
+#   rm(list = ls())
+
   data <- fromJSON(txt = body)
-  
   # Load the model source file
-  source("/var/task/model/MasterModel.R")
-  
+
   inp_curr_dist_rate <- data$curr_dist_rate
   inp_new_dist_rate <- data$new_dist_rate
   inp_cola <- data$cola

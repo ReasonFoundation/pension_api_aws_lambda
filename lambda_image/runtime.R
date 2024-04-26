@@ -40,15 +40,33 @@ tryCatch(
   }
   log_info("Handler found:", handler)
   handler_split <- strsplit(handler, ".", fixed = TRUE)[[1]]
+  log_info("Handler split:", handler_split)
   file_name <- paste0(handler_split[1], ".R")
+  log_info("File name:", file_name)
   function_name <- handler_split[2]
   log_info("Using function", function_name, "from", file_name)
 
-  log_debug("Checking if", file_name, "exists")
+#   log_info("Directory:", getwd())
+#   log_info("All files in directory:", list.files())
+
+#   log_debug("Checking if", file_name, "exists")
+#   log_info("Checking if", file_name, "exists", file.exists(file_name, envir = .GlobalEnv))
   if (!file.exists(file_name)) {
     stop(file_name, " doesn't exist in ", getwd())
   }
+
+  log_info("Attempting to source", file_name)
   source(file_name)
+  log_info("Sourced", file_name)
+
+#   log_info("Is function", function_name, "defined?", exists(function_name))
+#   log_info("Is function", function_name, "a function?", is.function(eval(parse(text = function_name))))
+
+#   log_info("Check existence of function", function_name, "in environment")
+#   if(!exists(function_name, where = .GlobalEnv)) {
+#     stop("Function name ", function_name, " isn't defined in the global environment")
+#   }
+
 
   log_debug("Checking if", function_name, "is defined")
   if (!exists(function_name)) {
