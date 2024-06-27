@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/anhtu/Documents/AIOps/Cloud Eng/Example/mspers-on-aws-lambda/.venv"
+VIRTUAL_ENV="/Users/anhtu/Documents/Reason Org/Full_Stack_Actuarial_Modeling_Projects/Mississippi_pension_system/mspers_on_aws_lambda/.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

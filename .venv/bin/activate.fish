@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/anhtu/Documents/AIOps/Cloud Eng/Example/mspers-on-aws-lambda/.venv"
+set -gx VIRTUAL_ENV "/Users/anhtu/Documents/Reason Org/Full_Stack_Actuarial_Modeling_Projects/Mississippi_pension_system/mspers_on_aws_lambda/.venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

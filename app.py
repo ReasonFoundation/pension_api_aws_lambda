@@ -58,7 +58,7 @@ class InferenceStack(core.Stack):
             id='lambda',
             function_name=project_name,
             code=ecr_image,
-            memory_size=10240,
+            memory_size=5376,
             role=lambda_role,
             # environment={
             #     'S3_MODEL_URI': s3_model_uri
@@ -99,7 +99,8 @@ class InferenceStack(core.Stack):
             api_id=api.http_api_id,
             credentials_arn=api_role.role_arn,
             integration_type='AWS_PROXY',
-            integration_uri=lambda_function.function_arn,
+            integration_uri=lambda_function.function_arn + ':Prod',
+            # integration_uri=lambda_function.function_arn,
             integration_method='POST',
             payload_format_version='2.0'
         )

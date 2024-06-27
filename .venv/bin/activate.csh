@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/anhtu/Documents/AIOps/Cloud Eng/Example/mspers-on-aws-lambda/.venv"
+setenv VIRTUAL_ENV "/Users/anhtu/Documents/Reason Org/Full_Stack_Actuarial_Modeling_Projects/Mississippi_pension_system/mspers_on_aws_lambda/.venv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

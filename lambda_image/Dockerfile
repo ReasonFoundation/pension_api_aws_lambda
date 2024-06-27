@@ -22,7 +22,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     && rm -f awscliv2.zip
 
 # install R packages
-RUN R -e "install.packages(c('readxl', 'dplyr', 'tidyr', 'zoo', 'data.table', 'openxlsx', 'Rcpp', 'httr', 'logger', 'glue', 'jsonlite'), repos = 'http://cran.rstudio.com/')"
+RUN R -e "install.packages(c('readxl', 'dplyr', 'tidyr', 'stringr', 'zoo', 'openxlsx', 'data.table', 'janitor', 'rio', 'Rcpp', 'httr', 'logger', 'glue', 'jsonlite'), repos = 'http://cran.rstudio.com/')"
 
 
 

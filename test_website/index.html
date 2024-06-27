@@ -10,26 +10,57 @@
 <body>
     <h1>Enter Model Data</h1>
     <form id="modelDataForm">
-        <label for="curr_dist_rate">Current Distribution Rate:</label>
-        <input type="text" id="curr_dist_rate" name="curr_dist_rate" required>
+        <!-- Existing fields -->
+        <label for="curr_discount_rate">Current Discount Rate:</label>
+        <input type="text" id="curr_discount_rate" name="curr_discount_rate" required>
+        <!-- Additional fields -->
+        <label for="new_discount_rate">New Discount Rate:</label>
+        <input type="text" id="new_discount_rate" name="new_discount_rate" required>
 
-        <label for="new_dist_rate">New Distribution Rate:</label>
-        <input type="text" id="new_dist_rate" name="new_dist_rate" required>
+        <label for="cola_for_tier_5">COLA for Tier 5:</label>
+        <input type="text" id="cola_for_tier_5" name="cola_for_tier_5" required>
 
-        <label for="cola">COLA:</label>
-        <input type="text" id="cola" name="cola" required>
+        <label for="tier5_vesting_period">Tier 5 Vesting Period:</label>
+        <input type="text" id="tier5_vesting_period" name="tier5_vesting_period" required>
 
-        <label for="retire_refund_ratio">Retire Refund Ratio:</label>
-        <input type="text" id="retire_refund_ratio" name="retire_refund_ratio" required>
+        <label for="db_new_ratio">DB New Ratio:</label>
+        <input type="text" id="db_new_ratio" name="db_new_ratio" required>
+
+        <label for="er_dc_contr_rate">ER DC Contribution Rate:</label>
+        <input type="text" id="er_dc_contr_rate" name="er_dc_contr_rate" required>
 
         <label for="funding_policy">Funding Policy:</label>
         <input type="text" id="funding_policy" name="funding_policy" required>
 
-        <label for="analysis_type">Analysis Type:</label>
-        <input type="text" id="analysis_type" name="analysis_type" required>
-
         <label for="roa_scenario">ROA Scenario:</label>
         <input type="text" id="roa_scenario" name="roa_scenario" required>
+
+        <label for="stat_new_hire_EE_contr">Stat New Hire EE Contribution:</label>
+        <input type="text" id="stat_new_hire_EE_contr" name="stat_new_hire_EE_contr" required>
+
+        <label for="is_fixed_ER_contr_rate">Is Fixed ER Contribution Rate:</label>
+        <input type="text" id="is_fixed_ER_contr_rate" name="is_fixed_ER_contr_rate" required>
+
+        <label for="fixed_ER_contr_rate_option">Fixed ER Contribution Rate Option:</label>
+        <input type="text" id="fixed_ER_contr_rate_option" name="fixed_ER_contr_rate_option" required>
+
+        <label for="amo_period_curr_hire_new_layer">AMO Period Current Hire New Layer:</label>
+        <input type="text" id="amo_period_curr_hire_new_layer" name="amo_period_curr_hire_new_layer" required>
+
+        <label for="amo_period_new_hire">AMO Period New Hire:</label>
+        <input type="text" id="amo_period_new_hire" name="amo_period_new_hire" required>
+
+        <label for="amo_method_curr_hire_curr_layer">AMO Method Current Hire Current Layer:</label>
+        <input type="text" id="amo_method_curr_hire_curr_layer" name="amo_method_curr_hire_curr_layer" required>
+
+        <label for="amo_method_curr_hire_new_layer">AMO Method Current Hire New Layer:</label>
+        <input type="text" id="amo_method_curr_hire_new_layer" name="amo_method_curr_hire_new_layer" required>
+
+        <label for="amo_method_new_hire">AMO Method New Hire:</label>
+        <input type="text" id="amo_method_new_hire" name="amo_method_new_hire" required>
+
+        <label for="ee_amo_cost_share_ratio">EE AMO Cost Share Ratio:</label>
+        <input type="text" id="ee_amo_cost_share_ratio" name="ee_amo_cost_share_ratio" required>
 
         <button type="button" onclick="submitData()">Submit</button>
     </form>
@@ -55,7 +86,7 @@
             // Print the input data
             document.getElementById('submittedData').innerText = json;
 
-            fetch('https://iopuw0yvdi.execute-api.us-east-1.amazonaws.com/prod/', {
+            fetch('https://gwdvkijcu7.execute-api.us-east-1.amazonaws.com/prod/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
